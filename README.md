@@ -16,8 +16,7 @@ The application will be controlled by an admin whose credentials will be saved i
 ## An Example Domain:
 
 ```
-{
- test: {
+test: {
   staff:{
     test_manager:{
       hash: // a password hash
@@ -38,7 +37,6 @@ The application will be controlled by an admin whose credentials will be saved i
       balance: 200
     }
   }
- }
 }
 ```
 
@@ -72,7 +70,11 @@ The application will be controlled by an admin whose credentials will be saved i
 ![](wireframes/student.png)
 
 /{domain}/{student_id}/cart - Allows relevant student of that domain to view their cart
+![](wireframes/cart.png)
 
+## Sitemap
+
+![](wireframes/sitemap.png)
 
 ## User Stories
 
