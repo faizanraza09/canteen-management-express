@@ -46,6 +46,7 @@ test: {
 - Backend: Node.js and Express.js
 - Database: MongoDB
 
+## [Link to Commented First Draft Schema](db.js)
 
 ## Wireframes
 
@@ -107,3 +108,7 @@ test: {
 - (3 points) Use dotenv for configuration for database, admin login etc
 - (5 points) Integrate React for a more dynamic user interface, state management and react router for navigation within the application
 
+## [Link to Initial Main Project File](app.js)
+
+## Annotations / References Used
+- not coded yet so no references used
