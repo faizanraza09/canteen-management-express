@@ -1,0 +1,29 @@
+<!-- admin-home.hbs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Home</title>
+</head>
+<body>
+  <h1>Welcome, Admin!</h1>
+
+  <h2>Add New Domain</h2>
+  <form action="/admin/add-domain" method="post">
+    <label for="domainName">Domain Name:</label>
+    <input type="text" id="domainName" name="domainName" required>
+
+    <label for="managerUsername">Manager Username:</label>
+    <input type="text" id="managerUsername" name="managerUsername" required>
+
+    <label for="managerPassword">Manager Password:</label>
+    <input type="password" id="managerPassword" name="managerPassword" required>
+
+    <button type="submit">Add Domain</button>
+  </form>
+
+  <a href="/admin/view-domains">View Domains</a>
+</body>
+</html>
