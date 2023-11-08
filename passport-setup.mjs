@@ -24,23 +24,26 @@ passport.deserializeUser(async (id, done) => {
         // Extract admin username from the ID
         const adminUsername = id.replace('admin-', '');
         // Create a simplified admin object
-        const admin = { id, username: adminUsername, role: 'admin' };
+        const admin = { id, username: adminUsername, role: 'admin'};
         return done(null, admin);
       }
     try {
-        const manager = await Managers.findById(id);
+        const manager = await Managers.findById(id).populate('domain');
         if (manager) {
-            return done(null, { ...manager.toObject(), role: 'manager' });
+            manager.role='manager';
+            return done(null, manager);
         }
 
-        const canteenOwner = await CanteenOwners.findById(id);
+        const canteenOwner = await CanteenOwners.findById(id).populate('domain');
         if (canteenOwner) {
-            return done(null, { ...canteenOwner.toObject(), role: 'canteen-owner' });
+            canteenOwner.role = 'canteen-owner';
+            return done(null, canteenOwner);
         }
 
-        const student = await Students.findById(id);
+        const student = await Students.findById(id).populate('domain');
         if (student) {
-            return done(null, { ...student.toObject(), role: 'student' });
+            student.role = 'student';
+            return done(null, student);
         }
 
         return done(null, false);
@@ -54,15 +57,15 @@ passport.deserializeUser(async (id, done) => {
 passport.use('manager-local', new LocalStrategy(
     async (username, password, done) => {
         try {
-            const manager = await Managers.findOne({ username: username });
+            const manager = await Managers.findOne({ username: username }).populate('domain');
             let match = false;
             if (manager)
                 match = await comparePasswords(password, manager.hash);
             if (!manager || !match) {
                 return done(null, false, { message: 'Invalid username or password' });
             }
-
-            return done(null, { ...manager.toObject(), role: 'manager' });
+            manager.role = 'manager';
+            return done(null, manager);
         } catch (err) {
             return done(err);
         }
@@ -73,15 +76,15 @@ passport.use('manager-local', new LocalStrategy(
 passport.use('canteen-owner-local', new LocalStrategy(
     async (username, password, done) => {
         try {
-            const canteenOwner = await CanteenOwners.findOne({ username: username });
+            const canteenOwner = await CanteenOwners.findOne({ username: username }).populate('domain');
             let match = false;
             if (canteenOwner)
                 match = await comparePasswords(password, canteenOwner.hash);
             if (!canteenOwner || !(match)) {
                 return done(null, false, { message: 'Invalid username or password' });
             }
-
-            return done(null, { ...canteenOwner.toObject(), role: 'canteen-owner' });
+            canteenOwner.role = 'canteen-owner';
+            return done(null, canteenOwner);
         } catch (err) {
             return done(err);
         }
@@ -92,7 +95,7 @@ passport.use('canteen-owner-local', new LocalStrategy(
 passport.use('student-local', new LocalStrategy(
     async (username, password, done) => {
         try {
-            const student = await Students.findOne({ username: username });
+            const student = await Students.findOne({ username: username }).populate('domain');
             let match = false;
             if (student)
                 match = await comparePasswords(password, student.hash);
@@ -100,8 +103,8 @@ passport.use('student-local', new LocalStrategy(
             if (!student || !(match)) {
                 return done(null, false, { message: 'Invalid username or password' });
             }
-
-            return done(null, { ...student.toObject(), role: 'student' });
+            student.role = 'student';
+            return done(null, student);
         } catch (err) {
             return done(err);
         }
@@ -118,7 +121,7 @@ passport.use('admin-local', new LocalStrategy(
             const adminId = `admin-${adminUsername}`;
             if (username === adminUsername && password === adminPassword) {
                 // Admin authentication successful
-                return done(null, { id: adminId, username: adminUsername, role: 'admin' });
+                return done(null, { id: adminId, username: adminUsername, role: 'admin'});
             } else {
                 // Incorrect admin credentials
                 return done(null, false, { message: 'Invalid admin credentials' });

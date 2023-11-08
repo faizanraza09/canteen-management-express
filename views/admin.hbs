@@ -1,0 +1,54 @@
+<!-- admin.hbs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/admin/createdomain">Add Domain</a></li>
+            <li><a href="/admin/listdomains">View Domains</a></li>
+        </ul>
+    </nav>
+
+    <h1>Admin Panel</h1>
+
+    {{#if createDomain}}
+        {{#if error}}
+            <p style="color: red;">{{error}}</p>
+        {{/if}}
+        <!-- Form for adding domains -->
+        <form action="/admin/createdomain" method="post">
+            <label for="domainName">Domain Name:</label>
+            <input type="text" id="domainName" name="domainName" required><br>
+
+            <label for="managerUsername">Manager Username:</label>
+            <input type="text" id="managerUsername" name="managerUsername" required><br>
+
+            <label for="managerPassword">Manager Password:</label>
+            <input type="password" id="managerPassword" name="managerPassword" required><br>
+
+            <input type="submit" value="Add Domain">
+        </form>
+    {{else}}
+        <!-- Table for displaying domains -->
+    <table border="1">
+        <tr>
+            <th>Domain Name</th>
+            <th>Manager Username</th>
+        </tr>
+
+        {{#each adminData.managers}}
+            <tr>
+                <td>{{this.domainName}}</td>
+                <td>{{this.managerUsername}}</td>
+            </tr>
+        {{/each}}
+    </table>
+    {{/if}}
+</body>
+</html>
