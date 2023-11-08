@@ -26,10 +26,10 @@
 <body>
     <nav>
         <ul>
-            <li><a href="/manager/createcanteenowner">Create Canteen Owner</a></li>
-            <li><a href="/manager/createstudent">Create Student</a></li>
-            <li><a href="/manager/viewcanteenowners">View Canteen Owners</a></li>
-            <li><a href="/manager/viewstudents">View Students</a></li>
+            <li><a href="/{{domain}}/manager/createcanteenowner">Create Canteen Owner</a></li>
+            <li><a href="/{{domain}}/manager/createstudent">Create Student</a></li>
+            <li><a href="/{{domain}}/manager/viewcanteenowners">View Canteen Owners</a></li>
+            <li><a href="/{{domain}}/manager/viewstudents">View Students</a></li>
         </ul>
     </nav>
 
@@ -37,7 +37,7 @@
 
     {{#if createCanteenOwner}}
         <!-- Form for creating a canteen owner account -->
-        <form action="/manager/createCanteenOwner" method="post">
+        <form action="/{{domain}}/manager/createcanteenowner" method="post">
             <!-- Your form fields for creating a canteen owner -->
             <label for="canteenOwnerUsername">Canteen Owner Username:</label>
             <input type="text" id="canteenOwnerUsername" name="canteenOwnerUsername" required><br>
@@ -49,12 +49,14 @@
 
     {{#if createStudent}}
         <!-- Form for creating a student account with balance -->
-        <form action="/manager/createStudent" method="post">
+        <form action="/{{domain}}/manager/createstudent" method="post">
             <!-- Your form fields for creating a student -->
             <label for="studentUsername">Student Username:</label>
             <input type="text" id="studentUsername" name="studentUsername" required><br>
             <label for="studentPassword">Student Password:</label>
             <input type="password" id="studentPassword" name="studentPassword" required><br>
+            <label for="studentName">Student Name:</label>
+            <input type="text" id="studentName" name="studentName" required><br>
             <label for="studentBalance">Student Balance:</label>
             <input type="number" id="studentBalance" name="studentBalance" required><br>
             <input type="submit" value="Create Student Account">
@@ -73,7 +75,7 @@
             <tbody>
                 {{#each canteenOwners}}
                     <tr>
-                        <td>{{this.canteenOwnerUsername}}</td>
+                        <td>{{username}}</td>
                     </tr>
                 {{/each}}
             </tbody>
@@ -87,14 +89,16 @@
             <thead>
                 <tr>
                     <th>Student Username</th>
+                    <th>Student Name</th>
                     <th>Balance</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each students}}
                     <tr>
-                        <td>{{this.studentUsername}}</td>
-                        <td>{{this.studentBalance}}</td>
+                        <td>{{username}}</td>
+                        <td>{{name}}</td>
+                        <td>{{balance}}</td>
                     </tr>
                 {{/each}}
             </tbody>

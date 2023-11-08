@@ -14,7 +14,16 @@ const canteenOwnerSchema = new Schema({
   username: { type: String, required: true },
   hash: { type: String, required: true },
   revenue: { type: Number, default: 0 },
-  price_list: { type: Map, of: Number, default: {} },
+  inventory: {
+    type: [
+        {
+            item: { type: String, required: true },
+            price: { type: Number, required: true },
+            quantity: { type: Number, required: true },
+        }
+    ],
+    default: [],
+},
   domain: { type: mongoose.Schema.Types.ObjectId, ref: 'Domains' },
 });
 

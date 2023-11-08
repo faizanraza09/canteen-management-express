@@ -36,7 +36,7 @@ passport.deserializeUser(async (id, done) => {
 
         const canteenOwner = await CanteenOwners.findById(id).populate('domain');
         if (canteenOwner) {
-            canteenOwner.role = 'canteen-owner';
+            canteenOwner.role = 'canteenowner';
             return done(null, canteenOwner);
         }
 
@@ -83,7 +83,7 @@ passport.use('canteen-owner-local', new LocalStrategy(
             if (!canteenOwner || !(match)) {
                 return done(null, false, { message: 'Invalid username or password' });
             }
-            canteenOwner.role = 'canteen-owner';
+            canteenOwner.role = 'canteenowner';
             return done(null, canteenOwner);
         } catch (err) {
             return done(err);
