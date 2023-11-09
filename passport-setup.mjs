@@ -2,7 +2,7 @@ import './config.mjs';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Managers, CanteenOwners, Students } from './db.mjs'; // Replace with the correct file path
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const comparePasswords = async (plainPassword, hashedPassword) => {
     try {

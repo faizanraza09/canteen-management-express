@@ -1,24 +1,22 @@
 {
   "name": "final-project-faizanraza09",
   "version": "1.0.0",
-  "description": "The content below is an example project proposal / requirements document. Replace the text below the lines marked \"__TODO__\" with details specific to your project. Remove the \"TODO\" lines.",
-  "main": "index.js",
+  "description": "## Overview *(TODO: Dhaba is a comprehensive web application designed to streamline school canteen operations. It caters to the needs of school administrators, canteen owners, and students, providing a seamless experience for managing accounts, updating menus, and making purchases. The frontend will be built using the React library for a more responsive and dynamic user interface.)*",
+  "main": "app.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "bcrypt": "^5.1.1",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-flash": "^0.0.2",
+    "express-session": "^1.17.3",
     "hbs": "^4.2.0",
     "mongoose": "^8.0.0",
-    "session": "^0.1.0"
-  },
-  "dependencies": {
-    "express-session": "^1.17.3",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0"
   }

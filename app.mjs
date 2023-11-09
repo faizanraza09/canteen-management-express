@@ -6,7 +6,7 @@ import bodyParser from 'body-parser'
 import { fileURLToPath } from 'url';
 import passport from './passport-setup.mjs';
 import flash from 'express-flash';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
