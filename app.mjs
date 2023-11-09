@@ -41,6 +41,11 @@ const hashPassword = async (password) => {
     }
 };
 
+// Utility function to calculate the total amount in the cart
+const calculateTotal = (cart) => {
+    return cart.reduce((total, item) => total + item.price, 0);
+};
+
 app.get('/', (req, res) => {
     res.send("Hello World");
 });
@@ -69,11 +74,11 @@ app.post('/login/manager', (req, res, next) => {
         }
         if (!user) {
             // Handle authentication failure, e.g., redirect to login page
+            req.flash('error', info.message);
             return res.redirect('/login/manager');
         }
 
         // Set the redirect path dynamically based on the user's domain
-        req.flash('error', info.message);
         const redirectPath = `/${user.domain.name}/manager/viewcanteenowners`;
 
         // Authenticate the user and redirect
@@ -125,7 +130,7 @@ app.post('/login/student', (req, res, next) => {
         }
 
         // Set the redirect path dynamically based on the user's domain
-        const redirectPath = `/${user.domain.name}/student/dashboards`;
+        const redirectPath = `/${user.domain.name}/student/dashboard`;
 
         // Authenticate the user and redirect
         req.logIn(user, (err) => {
@@ -466,6 +471,102 @@ app.get('/insert', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+
+
+
+
+
+
+
+
+// Student Routes
+// Student Dashboard
+app.get('/:domain/student/dashboard', async (req, res) => {
+    try {
+        if (!req.isAuthenticated() || req.user.role !== 'student') {
+            return res.redirect('/login/student');
+        }
+
+        // Fetch the student, populate the domain and inventory
+        const student = await Students.findById(req.user._id);
+        const canteenOwner = await CanteenOwners.findOne({ domain: student.domain });
+        // Render the student dashboard
+        res.render('student', {
+            studentName: student.name,
+            balance: student.balance,
+            inventory: canteenOwner.inventory,
+            cart: req.session.cart || [],
+            total: calculateTotal(req.session.cart || []),
+            domain: req.params.domain,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Add item to the cart
+app.get('/:domain/student/add-to-cart/:itemId', async (req, res) => {
+    try {
+        if (!req.isAuthenticated() || req.user.role !== 'student') {
+            return res.redirect('/login/student');
+        }
+
+        // Fetch the student, populate the domain and inventory
+        const student = await Students.findById(req.user._id)
+        // Find the CanteenOwner with the same domain ID
+        const canteenOwner = await CanteenOwners.findOne({ domain: student.domain });
+        // Find the selected item in the inventory
+        const selectedItem = canteenOwner.inventory.find(item => item._id.toString() === req.params.itemId);
+
+        if (selectedItem) {
+            // Add the item to the cart (stored in session)
+            req.session.cart = req.session.cart || [];
+            req.session.cart.push({
+                item: selectedItem.item,
+                price: selectedItem.price,
+            });
+        }
+
+        // Redirect back to the student dashboard
+        res.redirect(`/${req.params.domain}/student/dashboard`);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Purchase items in the cart
+app.post('/:domain/student/purchase', async (req, res) => {
+    try {
+
+        // Calculate the total amount in the cart
+        const total = calculateTotal(req.session.cart);
+        const student = await Students.findById(req.user._id)
+        // Check if the student has sufficient balance
+        if (student.balance >= total) {
+            // Deduct the total amount from the student's balance
+            student.balance -= total;
+            
+            // Clear the cart
+            req.session.cart = [];
+
+            // Save the updated student
+            await student.save();
+
+            // Redirect back to the student dashboard
+            res.redirect(`/${req.params.domain}/student/dashboard`);
+        } else {
+            // Insufficient balance, handle accordingly (e.g., display an error message)
+            res.status(400).send('Insufficient balance for purchase');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 
 
