@@ -43,7 +43,7 @@ const hashPassword = async (password) => {
 
 // Utility function to calculate the total amount in the cart
 const calculateTotal = (cart) => {
-    return cart.reduce((total, item) => total + item.price, 0);
+    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
 };
 
 app.get('/', (req, res) => {
@@ -83,7 +83,7 @@ app.post('/login/manager', (req, res, next) => {
 
         // Authenticate the user and redirect
         req.logIn(user, (err) => {
-            if (err) { 
+            if (err) {
                 return next(err);
             }
             return res.redirect(redirectPath);
@@ -168,36 +168,36 @@ app.get('/admin/createdomain', (req, res) => {
     if (!req.isAuthenticated() || req.user.role !== 'admin') {
         return res.redirect('/login/admin');
     }
-    res.render('admin', {createDomain: true});
+    res.render('admin', { createDomain: true });
 });
 
 app.post('/admin/createdomain', async (req, res) => {
     try {
-      const { domainName, managerUsername, managerPassword } = req.body;
-  
-      // Check if the manager username is already in use
-      // Check if the manager username is already in use
-      const existingManager = await Managers.findOne({ username: managerUsername });
-      if (existingManager) {
-        // Render the page again with an error message
-        return res.render('admin', { error: 'Manager username is already in use', createDomain: true });
-      }
-      // create the domain
-      const domain = await Domains.create({ name: domainName.toLowerCase()});
-      const hashed_password = await hashPassword(managerPassword);
-      // Create the manager
-      const manager = await Managers.create({
-        username: managerUsername,
-        hash: hashed_password,
-        domain: domain._id,
-      });
-  
-      res.redirect('/admin/listdomains');
+        const { domainName, managerUsername, managerPassword } = req.body;
+
+        // Check if the manager username is already in use
+        // Check if the manager username is already in use
+        const existingManager = await Managers.findOne({ username: managerUsername });
+        if (existingManager) {
+            // Render the page again with an error message
+            return res.render('admin', { error: 'Manager username is already in use', createDomain: true });
+        }
+        // create the domain
+        const domain = await Domains.create({ name: domainName.toLowerCase() });
+        const hashed_password = await hashPassword(managerPassword);
+        // Create the manager
+        const manager = await Managers.create({
+            username: managerUsername,
+            hash: hashed_password,
+            domain: domain._id,
+        });
+
+        res.redirect('/admin/listdomains');
     } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
+        console.error(error);
+        res.status(500).send('Internal Server Error');
     }
-  });
+});
 
 
 app.get('/admin/listdomains', async (req, res) => {
@@ -217,7 +217,7 @@ app.get('/admin/listdomains', async (req, res) => {
         };
 
         // Render the admin page and pass the data object
-        res.render('admin', { adminData, createDomain: false});
+        res.render('admin', { adminData, createDomain: false });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -239,7 +239,7 @@ app.get('/:domain/manager/createcanteenowner', (req, res) => {
 });
 
 app.post('/:domain/manager/createcanteenowner', async (req, res) => {
-    try{
+    try {
         const { canteenOwnerUsername, canteenOwnerPassword } = req.body;
         const hashed_password = await hashPassword(canteenOwnerPassword);
         const canteenOwner = await CanteenOwners.create({
@@ -249,7 +249,7 @@ app.post('/:domain/manager/createcanteenowner', async (req, res) => {
         });
         res.redirect(`/${req.params.domain}/manager/viewcanteenowners`);
     }
-    catch(error){
+    catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
@@ -263,7 +263,7 @@ app.get('/:domain/manager/createstudent', (req, res) => {
 });
 
 app.post('/:domain/manager/createstudent', async (req, res) => {
-    try{
+    try {
         const { studentUsername, studentPassword, studentName, studentBalance } = req.body;
         const hashed_password = await hashPassword(studentPassword);
         const student = await Students.create({
@@ -275,35 +275,35 @@ app.post('/:domain/manager/createstudent', async (req, res) => {
         });
         res.redirect(`/${req.params.domain}/manager/viewstudents`);
     }
-    catch(error){
+    catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
 });
 
-app.get('/:domain/manager/viewcanteenowners', async(req, res) => {
-    try{
+app.get('/:domain/manager/viewcanteenowners', async (req, res) => {
+    try {
         if (!req.isAuthenticated() || req.user.role !== 'manager') {
             return res.redirect('/login/manager');
         }
-        const canteenOwners = await CanteenOwners.find({domain: req.user.domain._id});
+        const canteenOwners = await CanteenOwners.find({ domain: req.user.domain._id });
         res.render('manager', { viewCanteenOwners: true, canteenOwners, domain: req.params.domain });
     }
-    catch(error){
+    catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
 });
 
 app.get('/:domain/manager/viewstudents', async (req, res) => {
-    try{
+    try {
         if (!req.isAuthenticated() || req.user.role !== 'manager') {
             return res.redirect('/login/manager');
         }
-        const students = await Students.find({domain: req.user.domain._id});
+        const students = await Students.find({ domain: req.user.domain._id });
         res.render('manager', { viewStudents: true, students, domain: req.params.domain });
     }
-    catch(error){
+    catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
@@ -326,8 +326,10 @@ app.get('/:domain/canteenowner/dashboard', async (req, res) => {
         }
 
         // Fetch the canteen owner and populate the inventory
-        //const canteenOwner = await CanteenOwners.findById(req.user._id).populate('inventory');
-        res.render('canteenOwner', { inventory: req.user.inventory, domain: req.params.domain, display: true });
+        const canteenOwner = await CanteenOwners.findById(req.user._id).populate('inventory');
+
+        // Render the canteen owner dashboard with revenue
+        res.render('canteenOwner', { inventory: canteenOwner.inventory, revenue: canteenOwner.revenue, domain: req.params.domain, display: true });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -356,7 +358,7 @@ app.get('/:domain/canteenowner/edit/:itemId', async (req, res) => {
     try {
         if (!req.isAuthenticated() || req.user.role !== 'canteenowner') {
             return res.redirect('/login/canteenowner');
-        }   
+        }
         // Fetch the canteen owner and the specific inventory item for editing
         //const canteenOwner = await CanteenOwner.findById(req.user._id);
         const selectedItem = req.user.inventory.find(item => item._id.toString() === req.params.itemId);
@@ -448,7 +450,7 @@ app.get('/insert', async (req, res) => {
             username: "canteen_owner_1",
             hash: canteenOwnerPassword,
             revenue: 10000,
-            inventory: [{ item:'apple',price:5,quantity:10},{ item:'banana',price:10,quantity:20}],
+            inventory: [{ item: 'apple', price: 5, quantity: 10 }, { item: 'banana', price: 10, quantity: 20 }],
             domain: domain._id,
         });
 
@@ -521,11 +523,58 @@ app.get('/:domain/student/add-to-cart/:itemId', async (req, res) => {
         const selectedItem = canteenOwner.inventory.find(item => item._id.toString() === req.params.itemId);
 
         if (selectedItem) {
-            // Add the item to the cart (stored in session)
-            req.session.cart = req.session.cart || [];
-            req.session.cart.push({
-                item: selectedItem.item,
-                price: selectedItem.price,
+            // Check if the item already exists in the cart
+            const existingCartItem = (req.session.cart || []).find(cartItem => cartItem.item === selectedItem.item);
+
+            if (existingCartItem) {
+                // If the item exists, update the quantity
+                existingCartItem.quantity += 1;
+            } else {
+                // If the item doesn't exist, add it to the cart
+                req.session.cart = req.session.cart || [];
+                req.session.cart.push({
+                    item: selectedItem.item,
+                    price: selectedItem.price,
+                    quantity: 1,
+                });
+            }
+        }
+
+        // Redirect back to the student dashboard
+        res.redirect(`/${req.params.domain}/student/dashboard`);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Modify the cart (clear, remove, or change quantity)
+app.post('/:domain/student/modify-cart', async (req, res) => {
+    try {
+        if (!req.isAuthenticated() || req.user.role !== 'student') {
+            return res.redirect('/login/student');
+        }
+
+        const action = req.body.action;
+        const itemId = req.body.itemId;
+
+        // Fetch the student
+        const student = await Students.findById(req.user._id);
+
+        if (action === 'clear') {
+            // Clear the entire cart
+            req.session.cart = [];
+        } else if (action === 'remove' && itemId) {
+            // Remove a specific item from the cart
+            req.session.cart = (req.session.cart || []).filter(cartItem => cartItem.item !== itemId);
+        } else if (action === 'changeQuantity' && itemId) {
+            // Change the quantity of a specific item in the session cart
+            const newQuantity = parseInt(req.body.newQuantity);
+            req.session.cart = (req.session.cart || []).map(cartItem => {
+                if (cartItem.item === itemId) {
+                    cartItem.quantity = newQuantity;
+                }
+                return cartItem;
             });
         }
 
@@ -537,23 +586,38 @@ app.get('/:domain/student/add-to-cart/:itemId', async (req, res) => {
     }
 });
 
+
 // Purchase items in the cart
 app.post('/:domain/student/purchase', async (req, res) => {
     try {
-
         // Calculate the total amount in the cart
         const total = calculateTotal(req.session.cart);
-        const student = await Students.findById(req.user._id)
+
+        // Fetch the student, populate the domain and inventory
+        const student = await Students.findById(req.user._id);
+        const canteenOwner = await CanteenOwners.findOne({ domain: student.domain });
+
         // Check if the student has sufficient balance
         if (student.balance >= total) {
             // Deduct the total amount from the student's balance
             student.balance -= total;
-            
+
+            // Update the canteen owner's revenue
+            canteenOwner.revenue += total;
+
+            // Deduct items from the canteen owner's inventory
+            req.session.cart.forEach(cartItem => {
+                const inventoryItem = canteenOwner.inventory.find(item => item.item === cartItem.item);
+                if (inventoryItem) {
+                    inventoryItem.quantity -= cartItem.quantity;
+                }
+            });
+
             // Clear the cart
             req.session.cart = [];
 
-            // Save the updated student
-            await student.save();
+            // Save the updated student and canteen owner
+            await Promise.all([student.save(), canteenOwner.save()]);
 
             // Redirect back to the student dashboard
             res.redirect(`/${req.params.domain}/student/dashboard`);
@@ -566,8 +630,6 @@ app.post('/:domain/student/purchase', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
-
-
 
 
 app.listen(process.env.PORT || 3000);

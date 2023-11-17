@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
 </head>
+
 <body>
     <h1>Welcome, {{studentName}}</h1>
 
@@ -16,20 +18,18 @@
             <tr>
                 <th>Item</th>
                 <th>Price</th>
-                <th>Quantity</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
             {{#each inventory}}
-                <tr>
-                    <td>{{this.item}}</td>
-                    <td>${{this.price}}</td>
-                    <td>{{this.quantity}}</td>
-                    <td>
-                        <a href="/{{../domain}}/student/add-to-cart/{{this._id}}">Add to Cart</a>
-                    </td>
-                </tr>
+            <tr>
+                <td>{{this.item}}</td>
+                <td>${{this.price}}</td>
+                <td>
+                    <a href="/{{../domain}}/student/add-to-cart/{{this._id}}">Add to Cart</a>
+                </td>
+            </tr>
             {{/each}}
         </tbody>
     </table>
@@ -40,22 +40,67 @@
             <tr>
                 <th>Item</th>
                 <th>Price</th>
+                <th>Quantity</th>
+                <th>Remove</th>
             </tr>
         </thead>
         <tbody>
             {{#each cart}}
-                <tr>
-                    <td>{{this.item}}</td>
-                    <td>${{this.price}}</td>
-                </tr>
+            <tr>
+                <td>{{this.item}}</td>
+                <td>${{this.price}}</td>
+                <td>
+                    <!-- Plus and minus buttons for changing quantity -->
+                    <form method="post" action="/{{../domain}}/student/modify-cart">
+                        <input type="hidden" name="action" value="changeQuantity">
+                        <input type="hidden" name="itemId" value="{{this.item}}">
+                        <button type="button" onclick="updateQuantity('{{this.item}}', -1)">-</button>
+                        <span id="{{this.item}}-quantity">{{this.quantity}}</span>
+                        <button type="button" onclick="updateQuantity('{{this.item}}', 1)">+</button>
+                        <input type="hidden" name="newQuantity" id="{{this.item}}-input" value="{{this.quantity}}">
+                        <!-- No need for the Update Quantity button -->
+                    </form>
+                </td>
+                <td>
+                    <!-- Options to modify the cart -->
+                    <form method="post" action="/{{../domain}}/student/modify-cart">
+                        <input type="hidden" name="action" value="remove">
+                        <input type="hidden" name="itemId" value="{{this.item}}">
+                        <button type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
             {{/each}}
         </tbody>
     </table>
 
     <h2>Total: ${{total}}</h2>
 
+    <!-- Option to clear the entire cart -->
+    <form method="post" action="/{{domain}}/student/modify-cart">
+        <input type="hidden" name="action" value="clear">
+        <button type="submit">Clear Cart</button>
+    </form>
+
     <form method="post" action="/{{domain}}/student/purchase">
         <button type="submit">Purchase</button>
     </form>
+
+    <!-- Script to update the displayed total -->
+    <script>
+        function updateQuantity(itemId, change) {
+            const inputElement = document.getElementById(`${itemId}-input`);
+            const quantityElement = document.getElementById(`${itemId}-quantity`);
+
+            let newQuantity = parseInt(inputElement.value, 10) + change;
+            newQuantity = Math.max(0, newQuantity); // Ensure the quantity is non-negative
+            inputElement.value = newQuantity;
+            quantityElement.textContent = newQuantity;
+
+            // Trigger the form submission to update the session cart
+            inputElement.form.submit();
+        }
+    </script>
 </body>
+
 </html>

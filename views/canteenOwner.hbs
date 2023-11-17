@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canteen Owner Dashboard</title>
 </head>
+
 <body>
     <h1>Canteen Owner Dashboard</h1>
 
     {{#if display}}
+        <h2>Revenue: ${{revenue}}</h2>
+
         <h2>Inventory</h2>
         <table>
             <thead>
@@ -69,4 +73,5 @@
         <a href="/{{domain}}/canteenowner/dashboard">Back to Dashboard</a>
     {{/if}}
 </body>
+
 </html>
