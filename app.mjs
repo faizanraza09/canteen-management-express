@@ -47,7 +47,7 @@ const calculateTotal = (cart) => {
 };
 
 app.get('/', (req, res) => {
-    res.send("Hello World");
+    res.redirect('/login/student');
 });
 
 
@@ -449,50 +449,50 @@ app.get('/:domain/canteenowner/delete/:itemId', async (req, res) => {
 
 
 // Define the route for data insertion
-app.get('/insert', async (req, res) => {
-    try {
-        // Sample Insert into Domain Collection
-        const domain = await Domains.create({
-            name: "school",
-        });
+// app.get('/insert', async (req, res) => {
+//     try {
+//         // Sample Insert into Domain Collection
+//         const domain = await Domains.create({
+//             name: "school",
+//         });
 
-        // Sample Insert into Manager Collection
-        const managerPassword = await hashPassword("hashed_password");
-        const manager = await Managers.create({
-            username: "john_doe",
-            hash: managerPassword,
-            domain: domain._id,
-        });
+//         // Sample Insert into Manager Collection
+//         const managerPassword = await hashPassword("hashed_password");
+//         const manager = await Managers.create({
+//             username: "john_doe",
+//             hash: managerPassword,
+//             domain: domain._id,
+//         });
 
-        // Sample Insert into Canteen Owner Collection
-        const canteenOwnerPassword = await hashPassword("hashed_password");
-        const canteenOwner = await CanteenOwners.create({
-            username: "canteen_owner_1",
-            hash: canteenOwnerPassword,
-            revenue: 10000,
-            inventory: [{ item: 'apple', price: 5, quantity: 10 }, { item: 'banana', price: 10, quantity: 20 }],
-            domain: domain._id,
-        });
+//         // Sample Insert into Canteen Owner Collection
+//         const canteenOwnerPassword = await hashPassword("hashed_password");
+//         const canteenOwner = await CanteenOwners.create({
+//             username: "canteen_owner_1",
+//             hash: canteenOwnerPassword,
+//             revenue: 10000,
+//             inventory: [{ item: 'apple', price: 5, quantity: 10 }, { item: 'banana', price: 10, quantity: 20 }],
+//             domain: domain._id,
+//         });
 
-        // Sample Insert into Student Collection
-        const studentPassword = await hashPassword("hashed_password");
-        const student = await Students.create({
-            username: "student_1",
-            name: "Student One",
-            hash: studentPassword,
-            balance: 50,
-            domain: domain._id,
-        });
+//         // Sample Insert into Student Collection
+//         const studentPassword = await hashPassword("hashed_password");
+//         const student = await Students.create({
+//             username: "student_1",
+//             name: "Student One",
+//             hash: studentPassword,
+//             balance: 50,
+//             domain: domain._id,
+//         });
 
-        console.log('Documents inserted successfully');
+//         console.log('Documents inserted successfully');
 
-        // Send a response
-        res.send('Data inserted successfully!');
-    } catch (error) {
-        console.error('Error inserting data:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
+//         // Send a response
+//         res.send('Data inserted successfully!');
+//     } catch (error) {
+//         console.error('Error inserting data:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });
 
 
 
