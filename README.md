@@ -16,33 +16,63 @@ The application will be controlled by an admin whose credentials will be saved i
 ## An Example Domain:
 
 ```
-test: {
-  staff:{
-    test_manager:{
-      hash: // a password hash
-    },
-    test_canteen_owner:{
-      hash:  //a password hash,
-      revenue: 1000,
-      price_list:{apple:3,banana:5}
-    }
-  },
-  students:{
-    1001 : {
-      hash:  //a password hash,
-      balance: 100
-    },
-    1002 : {
-      hash:  //a password hash,
-      balance: 200
-    }
-  }
+{
+  name: "University Canteen"
 }
 ```
 
+## An Example Manager
+
+```
+{
+  username: "manager123",
+  hash: "hashed_password",
+  domain: ObjectId("5f8d39a65a5b1d1ddc8c65a1") // Replace with an actual ObjectId
+}
+```
+
+## An Example Canteen Owner
+
+```
+{
+  username: "canteenOwner456",
+  hash: "hashed_password",
+  revenue: 1000,
+  inventory: [
+    {
+      item: "Snack",
+      price: 2.5,
+      quantity: 50
+    },
+    {
+      item: "Drink",
+      price: 1.5,
+      quantity: 30
+    }
+    // Add more items as needed
+  ],
+  domain: ObjectId("5f8d39a65a5b1d1ddc8c65a1") // Replace with an actual ObjectId
+}
+
+```
+
+## An Example Student
+
+```
+{
+  username: "student789",
+  name: "John Doe",
+  hash: "hashed_password",
+  balance: 50,
+  domain: ObjectId("5f8d39a65a5b1d1ddc8c65a1") // Replace with an actual ObjectId
+}
+```
+
+
+
 ## Technology Stack
 
-- Frontend: React
+- Frontend: hbs
 - Backend: Node.js and Express.js
 - Database: MongoDB
 
@@ -106,9 +136,10 @@ test: {
 ## Research Topics
 - (5 points) Implement Passport.js for authentication of all users
 - (3 points) Use dotenv for configuration for database, admin login etc
-- (2 points) Used bootsrap for styling
+- (2 points) Used bootstrap for styling
 
 ## [Link to Initial Main Project File](app.mjs)
 
 ## Annotations / References Used
-- not coded yet so no references used
+- https://www.passportjs.org/docs/
+- https://getbootstrap.com/
