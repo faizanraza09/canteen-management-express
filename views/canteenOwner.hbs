@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canteen Owner Dashboard</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
     <style>
         /* Your custom styles here */
         table {
@@ -29,6 +30,10 @@
 
 <body>
     <div class="container mt-4">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="/{{domain}}/canteenowner/dashboard">Dashboard</a>
+            <a class="navbar-brand" href="/{{domain}}/canteenowner/vieworders">View Orders</a>
+        </nav>
         <h1>Canteen Owner Dashboard</h1>
 
         {{#if display}}
@@ -99,6 +104,37 @@
             </div>
             <button type="submit" class="btn btn-primary">Update Item</button>
         </form>
+
+        <a href="/{{domain}}/canteenowner/dashboard" class="btn btn-secondary mt-2">Back to Dashboard</a>
+        {{/if}}
+
+        {{#if viewOrders}}
+        <h1>Student Orders</h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each orders}}
+                <tr>
+                    <td>{{this.student.name}}</td>
+                    <td>
+                        {{#each this.items}}
+                        {{this.quantity}}x {{this.item}} ({{this.price}})
+                        {{/each}}
+                    </td>
+                    <td>${{this.total}}</td>
+                    <td>{{this.datetime}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
 
         <a href="/{{domain}}/canteenowner/dashboard" class="btn btn-secondary mt-2">Back to Dashboard</a>
         {{/if}}

@@ -1,3 +1,5 @@
+// db.mjs
+
 import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
@@ -16,15 +18,30 @@ const canteenOwnerSchema = new Schema({
   revenue: { type: Number, default: 0 },
   inventory: {
     type: [
-        {
-            item: { type: String, required: true },
-            price: { type: Number, required: true },
-            quantity: { type: Number, required: true },
-        }
+      {
+        item: { type: String, required: true },
+        price: { type: Number, required: true },
+        quantity: { type: Number, required: true },
+      },
     ],
     default: [],
-},
+  },
   domain: { type: mongoose.Schema.Types.ObjectId, ref: 'Domains' },
+  // Add orders field for storing orders placed by students
+  orders: [
+    {
+      student: { type: mongoose.Schema.Types.ObjectId, ref: 'Students' },
+      items: [
+        {
+          item: { type: String, required: true },
+          price: { type: Number, required: true },
+          quantity: { type: Number, required: true },
+        },
+      ],
+      total: { type: Number, required: true },
+      datetime: { type: Date, default: Date.now }, // Add the datetime field
+    },
+  ],
 });
 
 // Student Schema
@@ -41,13 +58,13 @@ const domainSchema = new Schema({
   name: { type: String, required: true },
 });
 
-// Manager Model 
-const Managers = mongoose.model('Managers', managerSchema);
 
+
+// Manager Model
+const Managers = mongoose.model('Managers', managerSchema);
 
 // Canteen Owner Model
 const CanteenOwners = mongoose.model('CanteenOwners', canteenOwnerSchema);
-
 
 // Student Model
 const Students = mongoose.model('Students', studentSchema);
@@ -55,6 +72,8 @@ const Students = mongoose.model('Students', studentSchema);
 // Domain Model
 const Domains = mongoose.model('Domains', domainSchema);
 
+
+
 mongoose.connect(process.env.DSN);
 
-export {Domains, Managers, CanteenOwners, Students};
+export { Domains, Managers, CanteenOwners, Students};

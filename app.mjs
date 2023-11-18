@@ -349,7 +349,7 @@ app.get('/:domain/canteenowner/dashboard', async (req, res) => {
         const canteenOwner = await CanteenOwners.findById(req.user._id).populate('inventory');
 
         // Render the canteen owner dashboard with revenue
-        res.render('canteenOwner', { inventory: canteenOwner.inventory, revenue: canteenOwner.revenue, domain: req.params.domain, display: true });
+        res.render('canteenOwner', { inventory: canteenOwner.inventory, revenue: canteenOwner.revenue, domain: req.params.domain, display: true});
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -446,7 +446,29 @@ app.get('/:domain/canteenowner/delete/:itemId', async (req, res) => {
     }
 });
 
+// Route for canteen owner to view student orders
+app.get('/:domain/canteenowner/vieworders', async (req, res) => {
+    try {
+        if (!req.isAuthenticated() || req.user.role !== 'canteenowner') {
+            return res.redirect('/login/canteenowner');
+        }
 
+        // Fetch the canteen owner and populate the orders
+        const canteenOwner = await CanteenOwners.findOne({ domain: req.user.domain._id }).populate({
+            path: 'orders',
+            populate: {
+                path: 'student',
+            },
+        });
+
+        // Extract orders from the canteen owner
+        const orders = canteenOwner ? canteenOwner.orders : [];
+        res.render('canteenOwner', { viewOrders: true, orders, domain: req.params.domain });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 // Define the route for data insertion
 // app.get('/insert', async (req, res) => {
@@ -619,28 +641,50 @@ app.post('/:domain/student/purchase', async (req, res) => {
 
         // Check if the student has sufficient balance
         if (student.balance >= total) {
-            // Deduct the total amount from the student's balance
-            student.balance -= total;
-
-            // Update the canteen owner's revenue
-            canteenOwner.revenue += total;
-
-            // Deduct items from the canteen owner's inventory
-            req.session.cart.forEach(cartItem => {
+            // Check if the required quantity of items is available in the canteen owner's inventory
+            const itemsAvailable = req.session.cart.every(cartItem => {
                 const inventoryItem = canteenOwner.inventory.find(item => item.item === cartItem.item);
-                if (inventoryItem) {
-                    inventoryItem.quantity -= cartItem.quantity;
-                }
+                return inventoryItem && inventoryItem.quantity >= cartItem.quantity;
             });
 
-            // Clear the cart
-            req.session.cart = [];
+            if (itemsAvailable) {
+                // Deduct the total amount from the student's balance
+                student.balance -= total;
 
-            // Save the updated student and canteen owner
-            await Promise.all([student.save(), canteenOwner.save()]);
+                // Update the canteen owner's revenue
+                canteenOwner.revenue += total;
 
-            // Redirect back to the student dashboard
-            res.redirect(`/${req.params.domain}/student/dashboard`);
+                // Deduct items from the canteen owner's inventory
+                req.session.cart.forEach(cartItem => {
+                    const inventoryItem = canteenOwner.inventory.find(item => item.item === cartItem.item);
+                    if (inventoryItem) {
+                        inventoryItem.quantity -= cartItem.quantity;
+                    }
+                });
+
+                // Save the order in the canteen owner's orders array with datetime
+                const order = {
+                    student: student._id,
+                    items: req.session.cart,
+                    total: total,
+                    domain: student.domain._id,
+                    datetime: new Date(), // Include the current datetime
+                };
+
+                canteenOwner.orders.push(order);
+
+                // Clear the cart
+                req.session.cart = [];
+
+                // Save the updated student and canteen owner
+                await Promise.all([student.save(), canteenOwner.save()]);
+
+                // Redirect back to the student dashboard
+                res.redirect(`/${req.params.domain}/student/dashboard`);
+            } else {
+                // Not enough items available in the inventory, handle accordingly
+                res.status(400).send('Not enough items available for purchase');
+            }
         } else {
             // Insufficient balance, handle accordingly (e.g., display an error message)
             res.status(400).send('Insufficient balance for purchase');
@@ -650,6 +694,7 @@ app.post('/:domain/student/purchase', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 
 app.listen(process.env.PORT || 3000);
