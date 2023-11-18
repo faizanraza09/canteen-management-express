@@ -1,0 +1,24 @@
+body {
+    padding: 20px;
+}
+
+h1, h2 {
+    color: #007bff;
+}
+
+table {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+th, td {
+    text-align: center;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+button {
+    margin-right: 10px;
+}

@@ -2,53 +2,79 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Your custom styles here */
+    </style>
 </head>
+
 <body>
-    <nav>
-        <ul>
-            <li><a href="/admin/createdomain">Add Domain</a></li>
-            <li><a href="/admin/listdomains">View Domains</a></li>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/createdomain">Add Domain</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/listdomains">View Domains</a>
+            </li>
         </ul>
     </nav>
 
-    <h1>Admin Panel</h1>
+    <div class="container mt-4">
+        <h1>Admin Panel</h1>
 
-    {{#if createDomain}}
+        {{#if createDomain}}
         {{#if error}}
-            <p style="color: red;">{{error}}</p>
+        <p style="color: red;">{{error}}</p>
         {{/if}}
         <!-- Form for adding domains -->
         <form action="/admin/createdomain" method="post">
-            <label for="domainName">Domain Name:</label>
-            <input type="text" id="domainName" name="domainName" required><br>
+            <div class="form-group">
+                <label for="domainName">Domain Name:</label>
+                <input type="text" class="form-control" id="domainName" name="domainName" required>
+            </div>
 
-            <label for="managerUsername">Manager Username:</label>
-            <input type="text" id="managerUsername" name="managerUsername" required><br>
+            <div class="form-group">
+                <label for="managerUsername">Manager Username:</label>
+                <input type="text" class="form-control" id="managerUsername" name="managerUsername" required>
+            </div>
 
-            <label for="managerPassword">Manager Password:</label>
-            <input type="password" id="managerPassword" name="managerPassword" required><br>
+            <div class="form-group">
+                <label for="managerPassword">Manager Password:</label>
+                <input type="password" class="form-control" id="managerPassword" name="managerPassword" required>
+            </div>
 
-            <input type="submit" value="Add Domain">
+            <button type="submit" class="btn btn-primary">Add Domain</button>
         </form>
-    {{else}}
+        {{else}}
         <!-- Table for displaying domains -->
-    <table border="1">
-        <tr>
-            <th>Domain Name</th>
-            <th>Manager Username</th>
-        </tr>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Domain Name</th>
+                    <th>Manager Username</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each adminData.managers}}
+                <tr>
+                    <td>{{this.domainName}}</td>
+                    <td>{{this.managerUsername}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{/if}}
+    </div>
 
-        {{#each adminData.managers}}
-            <tr>
-                <td>{{this.domainName}}</td>
-                <td>{{this.managerUsername}}</td>
-            </tr>
-        {{/each}}
-    </table>
-    {{/if}}
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

@@ -241,15 +241,25 @@ app.get('/:domain/manager/createcanteenowner', (req, res) => {
 app.post('/:domain/manager/createcanteenowner', async (req, res) => {
     try {
         const { canteenOwnerUsername, canteenOwnerPassword } = req.body;
+        const existingCanteenOwner = await CanteenOwners.findOne({ username: canteenOwnerUsername });
+        
+        if (existingCanteenOwner) {
+            return res.render('manager', {
+                createCanteenOwner: true,
+                domain: req.params.domain,
+                error: 'Canteen Owner with that username already exists.',
+            });
+        }
+
         const hashed_password = await hashPassword(canteenOwnerPassword);
         const canteenOwner = await CanteenOwners.create({
             username: canteenOwnerUsername,
             hash: hashed_password,
             domain: req.user.domain._id,
         });
+
         res.redirect(`/${req.params.domain}/manager/viewcanteenowners`);
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
@@ -265,6 +275,16 @@ app.get('/:domain/manager/createstudent', (req, res) => {
 app.post('/:domain/manager/createstudent', async (req, res) => {
     try {
         const { studentUsername, studentPassword, studentName, studentBalance } = req.body;
+        const existingStudent = await Students.findOne({ username: studentUsername });
+
+        if (existingStudent) {
+            return res.render('manager', {
+                createStudent: true,
+                domain: req.params.domain,
+                error: 'Student with that username already exists.',
+            });
+        }
+
         const hashed_password = await hashPassword(studentPassword);
         const student = await Students.create({
             username: studentUsername,
@@ -273,9 +293,9 @@ app.post('/:domain/manager/createstudent', async (req, res) => {
             balance: studentBalance,
             domain: req.user.domain._id,
         });
+
         res.redirect(`/${req.params.domain}/manager/viewstudents`);
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }

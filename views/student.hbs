@@ -5,86 +5,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        /* Your custom styles can go here */
+        body {
+            padding: 20px;
+        }
+        .quantity-form {
+        display: flex;
+        align-items: center;
+    }
+
+    .quantity-form button {
+        margin-right: 5px; /* Adjust this value as needed for spacing */
+    }
+    </style>
 </head>
 
 <body>
-    <h1>Welcome, {{studentName}}</h1>
+    <div class="container">
+        <h1 class="mt-3">Welcome, {{studentName}}</h1>
 
-    <h2>Balance: ${{balance}}</h2>
+        <h2 class="mt-4">Balance: ${{balance}}</h2>
 
-    <h2>Canteen Inventory</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Price</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each inventory}}
-            <tr>
-                <td>{{this.item}}</td>
-                <td>${{this.price}}</td>
-                <td>
-                    <a href="/{{../domain}}/student/add-to-cart/{{this._id}}">Add to Cart</a>
-                </td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
+        <h2 class="mt-4">Canteen Inventory</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each inventory}}
+                <tr>
+                    <td>{{this.item}}</td>
+                    <td>${{this.price}}</td>
+                    <td>
+                        <a href="/{{../domain}}/student/add-to-cart/{{this._id}}" class="btn btn-primary">Add to
+                            Cart</a>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
 
-    <h2>Shopping Cart</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Remove</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each cart}}
-            <tr>
-                <td>{{this.item}}</td>
-                <td>${{this.price}}</td>
-                <td>
-                    <!-- Plus and minus buttons for changing quantity -->
-                    <form method="post" action="/{{../domain}}/student/modify-cart">
-                        <input type="hidden" name="action" value="changeQuantity">
-                        <input type="hidden" name="itemId" value="{{this.item}}">
-                        <button type="button" onclick="updateQuantity('{{this.item}}', -1)">-</button>
-                        <span id="{{this.item}}-quantity">{{this.quantity}}</span>
-                        <button type="button" onclick="updateQuantity('{{this.item}}', 1)">+</button>
-                        <input type="hidden" name="newQuantity" id="{{this.item}}-input" value="{{this.quantity}}">
-                        <!-- No need for the Update Quantity button -->
-                    </form>
-                </td>
-                <td>
-                    <!-- Options to modify the cart -->
-                    <form method="post" action="/{{../domain}}/student/modify-cart">
-                        <input type="hidden" name="action" value="remove">
-                        <input type="hidden" name="itemId" value="{{this.item}}">
-                        <button type="submit">Remove</button>
-                    </form>
-                </td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
+        <h2 class="mt-4">Shopping Cart</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each cart}}
+                <tr>
+                    <td>{{this.item}}</td>
+                    <td>${{this.price}}</td>
+                    <td>
+                        <!-- Plus and minus buttons for changing quantity -->
+                        <div class="input-group">
+                            <form method="post" action="/{{../domain}}/student/modify-cart" class="quantity-form">
+                                <input type="hidden" name="action" value="changeQuantity">
+                                <input type="hidden" name="itemId" value="{{this.item}}">
 
-    <h2>Total: ${{total}}</h2>
+                                <button type="button" class="btn btn-sm btn-secondary"
+                                    onclick="updateQuantity('{{this.item}}', -1)">-</button>
+                                <span class="input-group-text" id="{{this.item}}-quantity">{{this.quantity}}</span>
+                                <button type="button" class="btn btn-sm btn-secondary"
+                                    onclick="updateQuantity('{{this.item}}', 1)">+</button>
 
-    <!-- Option to clear the entire cart -->
-    <form method="post" action="/{{domain}}/student/modify-cart">
-        <input type="hidden" name="action" value="clear">
-        <button type="submit">Clear Cart</button>
-    </form>
+                                <input type="hidden" name="newQuantity" id="{{this.item}}-input"
+                                    value="{{this.quantity}}">
+                            </form>
+                        </div>
+                    </td>
+                    <td>
+                        <form method="post" action="/{{../domain}}/student/modify-cart">
+                            <input type="hidden" name="action" value="remove">
+                            <input type="hidden" name="itemId" value="{{this.item}}">
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
 
-    <form method="post" action="/{{domain}}/student/purchase">
-        <button type="submit">Purchase</button>
-    </form>
+        <h2 class="mt-4">Total: ${{total}}</h2>
+
+        <!-- Option to clear the entire cart -->
+        <form method="post" action="/{{domain}}/student/modify-cart" class="mb-3">
+            <input type="hidden" name="action" value="clear">
+            <button type="submit" class="btn btn-warning">Clear Cart</button>
+        </form>
+
+        <form method="post" action="/{{domain}}/student/purchase">
+            <button type="submit" class="btn btn-success">Purchase</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 
     <!-- Script to update the displayed total -->
     <script>

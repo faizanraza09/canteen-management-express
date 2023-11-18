@@ -1,3 +1,5 @@
+<!-- canteenowner.hbs -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,16 +7,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canteen Owner Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Your custom styles here */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Canteen Owner Dashboard</h1>
+    <div class="container mt-4">
+        <h1>Canteen Owner Dashboard</h1>
 
-    {{#if display}}
+        {{#if display}}
         <h2>Revenue: ${{revenue}}</h2>
 
         <h2>Inventory</h2>
-        <table>
+        <table class="table">
             <thead>
                 <tr>
                     <th>Item</th>
@@ -25,53 +46,67 @@
             </thead>
             <tbody>
                 {{#each inventory}}
-                    <tr>
-                        <td>{{this.item}}</td>
-                        <td>{{this.price}}</td>
-                        <td>{{this.quantity}}</td>
-                        <td>
-                            <a href="/{{../domain}}/canteenowner/edit/{{this._id}}">Edit</a>
-                        |   <!-- Separator for better readability -->
-                            <a href="/{{../domain}}/canteenowner/delete/{{this._id}}" onclick="return confirm('Are you sure you want to delete this item?')">Delete</a>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>{{this.item}}</td>
+                    <td>{{this.price}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td>
+                        <a href="/{{../domain}}/canteenowner/edit/{{this._id}}">Edit</a> |
+                        <a href="/{{../domain}}/canteenowner/delete/{{this._id}}"
+                            onclick="return confirm('Are you sure you want to delete this item?')">Delete</a>
+                    </td>
+                </tr>
                 {{/each}}
             </tbody>
         </table>
 
         <h2>Add Item</h2>
         <form method="post" action="/{{domain}}/canteenowner/additem">
-            <label for="itemName">Item Name:</label>
-            <input type="text" id="itemName" name="itemName" required>
-            <br>
-            <label for="itemPrice">Item Price:</label>
-            <input type="number" id="itemPrice" name="itemPrice" required>
-            <br>
-            <label for="itemQuantity">Item Quantity:</label>
-            <input type="number" id="itemQuantity" name="itemQuantity" required>
-            <br>
-            <button type="submit">Add Item</button>
+            <div class="form-group">
+                <label for="itemName">Item Name:</label>
+                <input type="text" class="form-control" id="itemName" name="itemName" required>
+            </div>
+            <div class="form-group">
+                <label for="itemPrice">Item Price:</label>
+                <input type="number" class="form-control" id="itemPrice" name="itemPrice" required>
+            </div>
+            <div class="form-group">
+                <label for="itemQuantity">Item Quantity:</label>
+                <input type="number" class="form-control" id="itemQuantity" name="itemQuantity" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Item</button>
         </form>
-    {{/if}}
+        {{/if}}
 
-    {{#if editItem}}
+        {{#if editItem}}
         <h2>Edit Item</h1>
 
         <form method="post" action="/{{domain}}/canteenowner/edit/{{selectedItem._id}}">
-            <label for="itemName">Item Name:</label>
-            <input type="text" id="itemName" name="itemName" value="{{selectedItem.item}}" required>
-            <br>
-            <label for="itemPrice">Item Price:</label>
-            <input type="number" id="itemPrice" name="itemPrice" value="{{selectedItem.price}}" required>
-            <br>
-            <label for="itemQuantity">Item Quantity:</label>
-            <input type="number" id="itemQuantity" name="itemQuantity" value="{{selectedItem.quantity}}" required>
-            <br>
-            <button type="submit">Update Item</button>
+            <div class="form-group">
+                <label for="itemName">Item Name:</label>
+                <input type="text" class="form-control" id="itemName" name="itemName" value="{{selectedItem.item}}"
+                    required>
+            </div>
+            <div class="form-group">
+                <label for="itemPrice">Item Price:</label>
+                <input type="number" class="form-control" id="itemPrice" name="itemPrice" value="{{selectedItem.price}}"
+                    required>
+            </div>
+            <div class="form-group">
+                <label for="itemQuantity">Item Quantity:</label>
+                <input type="number" class="form-control" id="itemQuantity" name="itemQuantity"
+                    value="{{selectedItem.quantity}}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Item</button>
         </form>
 
-        <a href="/{{domain}}/canteenowner/dashboard">Back to Dashboard</a>
-    {{/if}}
+        <a href="/{{domain}}/canteenowner/dashboard" class="btn btn-secondary mt-2">Back to Dashboard</a>
+        {{/if}}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
