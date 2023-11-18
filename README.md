@@ -106,7 +106,7 @@ test: {
 ## Research Topics
 - (5 points) Implement Passport.js for authentication of all users
 - (3 points) Use dotenv for configuration for database, admin login etc
-- (5 points) Integrate React for a more dynamic user interface, state management and react router for navigation within the application
+- (2 points) Used bootsrap for styling
 
 ## [Link to Initial Main Project File](app.mjs)
 
