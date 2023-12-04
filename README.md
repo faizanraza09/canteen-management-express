@@ -49,9 +49,18 @@ The application will be controlled by an admin whose credentials will be saved i
       price: 1.5,
       quantity: 30
     }
-    // Add more items as needed
   ],
-  domain: ObjectId("5f8d39a65a5b1d1ddc8c65a1") // Replace with an actual ObjectId
+  domain: ObjectId("5f8d39a65a5b1d1ddc8c65a1"),
+  orders: [
+    {
+      student: mongoose.Types.ObjectId("60c7c4e1a8b15b001f8498c3"), // Replace with a valid ObjectId
+      items: [
+        { item: "Snack1", price: 2.5, quantity: 2 },
+        { item: "Drink1", price: 1.5, quantity: 1 },
+      ],
+      total: 6.5,
+    },
+  ], 
 }
 
 ```
@@ -64,7 +73,7 @@ The application will be controlled by an admin whose credentials will be saved i
   name: "John Doe",
   hash: "hashed_password",
   balance: 50,
-  domain: ObjectId("5f8d39a65a5b1d1ddc8c65a1") // Replace with an actual ObjectId
+  domain: ObjectId("5f8d39a65a5b1d1ddc8c65a1") 
 }
 ```
 
